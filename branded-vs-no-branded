@@ -1,0 +1,35 @@
+SELECT
+  CASE
+    WHEN GROUPING(Category) = 1 THEN 'Total'
+    ELSE Category
+  END AS KeywordCategory,
+  SUM(clicks) AS TotalClicks
+FROM (
+  SELECT
+    clicks,
+    CASE
+      WHEN LOWER(query) LIKE '%keywords%' 
+           OR LOWER(query) LIKE '%keywords%' 
+           OR LOWER(query) LIKE '%keywords%' 
+           OR LOWER(query) LIKE '%keywords%' 
+           OR LOWER(query) LIKE '%imperial%' 
+           OR LOWER(query) LIKE '%keywords%'
+           OR LOWER(query) LIKE '%keywords%'
+           OR LOWER(query) LIKE '%keywords%'
+           OR LOWER(query) LIKE '%keywords%'
+           OR LOWER(query) LIKE '%keywords%'
+           OR LOWER(query) LIKE '%keywords%'
+           OR LOWER(query) LIKE '%keywords%'
+           OR LOWER(query) LIKE '%keywords%'
+           OR LOWER(query) LIKE '%keywords%'
+           OR LOWER(query) LIKE '%keywords%'
+           OR LOWER(query) LIKE '%keywords%'
+           OR LOWER(query) LIKE '%keywords%' THEN 'Branded'
+      ELSE 'Non-Branded'
+    END as Category
+  FROM
+    `searchconsole.searchdata_url_impression`
+  WHERE
+    data_date >= '2023-07-01' AND data_date <= '2024-06-16'
+)
+GROUP BY ROLLUP(Category)
