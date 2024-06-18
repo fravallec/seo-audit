@@ -1,0 +1,36 @@
+WITH aggregated_data AS (
+  SELECT
+    query,
+    SUM(clicks) AS clicks,
+    SUM(impressions) AS impressions
+  FROM
+    `searchconsole.searchdata_url_impression` -- replace with your actual table name
+  WHERE search_type = 'WEB' AND query NOT LIKE '%#%'
+    AND data_date BETWEEN '2023-06-01' AND '2024-06-17'
+  GROUP BY
+    query
+)
+
+SELECT
+  groups_pages,
+  COUNT(query) AS total_queries
+FROM (
+  SELECT
+    query,
+    clicks,
+    impressions,
+    CASE
+      WHEN clicks > 1000 THEN 'Top'
+      WHEN clicks BETWEEN 101 AND 1000 THEN 'Good'
+      WHEN clicks BETWEEN 21 AND 100 THEN 'Fair'
+      WHEN clicks BETWEEN 1 AND 20 THEN 'Weak'
+      WHEN clicks = 0 AND impressions > 100 THEN 'Opportunity'
+      WHEN clicks = 0 AND impressions <= 100 THEN 'Dead'
+    END AS groups_pages
+  FROM
+    aggregated_data
+) a
+GROUP BY
+  groups_pages
+ORDER BY
+  total_queries DESC;
