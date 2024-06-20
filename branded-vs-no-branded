@@ -12,7 +12,7 @@ FROM (
            OR LOWER(query) LIKE '%keywords%' 
            OR LOWER(query) LIKE '%keywords%' 
            OR LOWER(query) LIKE '%keywords%' 
-           OR LOWER(query) LIKE '%imperial%' 
+           OR LOWER(query) LIKE '%keyword%' 
            OR LOWER(query) LIKE '%keywords%'
            OR LOWER(query) LIKE '%keywords%'
            OR LOWER(query) LIKE '%keywords%'
