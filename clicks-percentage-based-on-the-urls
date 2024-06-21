@@ -1,0 +1,19 @@
+WITH aggregated_data AS (
+    SELECT url,
+           SUM(clicks) AS total_clicks,
+           SUM(impressions) AS total_impressions
+    FROM `searchconsole.searchdata_url_impression`
+    WHERE data_date BETWEEN '2023-06-01' AND '2024-06-17'
+    GROUP BY url
+),
+total_clicks_sum AS (
+    SELECT SUM(total_clicks) AS sum_clicks
+    FROM aggregated_data
+)
+SELECT a.url,
+       a.total_clicks,
+       a.total_impressions,
+       (a.total_clicks / t.sum_clicks) * 100 AS click_percentage
+FROM aggregated_data a
+JOIN total_clicks_sum t ON 1=1
+ORDER BY a.total_clicks DESC;
