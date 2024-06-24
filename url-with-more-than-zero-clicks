@@ -1,0 +1,23 @@
+WITH filtered_data AS (
+    SELECT
+        url,
+        clicks
+    FROM
+        `searchconsole.searchdata_url_impression`
+    WHERE
+        data_date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) AND CURRENT_DATE()
+),
+click_summary AS (
+    SELECT
+        url,
+        SUM(clicks) AS total_clicks
+    FROM
+        filtered_data
+    GROUP BY
+        url
+)
+SELECT
+    COUNTIF(total_clicks > 1) AS urls_with_more_than_1_clicks,
+    COUNTIF(total_clicks = 0) AS urls_with_zero_clicks
+FROM
+    click_summary;
