@@ -1,0 +1,39 @@
+WITH current_year_data AS (
+  SELECT
+    query,
+    SUM(clicks) AS current_year_clicks
+  FROM
+    `your_dataset.your_table`
+  WHERE
+    DATE(data_date) BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH) AND CURRENT_DATE()
+  GROUP BY
+    query
+),
+previous_year_data AS (
+  SELECT
+    query,
+    SUM(clicks) AS previous_year_clicks
+  FROM
+    `your_dataset.your_table`
+  WHERE
+    DATE(data_date) BETWEEN DATE_SUB(DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH), INTERVAL 12 MONTH) AND DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH)
+  GROUP BY
+    query
+)
+SELECT
+  c.query,
+  c.current_year_clicks,
+  p.previous_year_clicks,
+  c.current_year_clicks - p.previous_year_clicks AS clicks_difference,
+  CASE 
+    WHEN p.previous_year_clicks = 0 THEN NULL
+    ELSE (c.current_year_clicks - p.previous_year_clicks) / p.previous_year_clicks * 100 
+  END AS percentage_change
+FROM
+  current_year_data c
+LEFT JOIN
+  previous_year_data p
+ON
+  c.query = p.query
+ORDER BY
+  percentage_change DESC;
